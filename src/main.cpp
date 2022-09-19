@@ -6,14 +6,14 @@ using namespace std;
 
 void play_toy() {
 	string command, direction;
-	char delimitator;
-	string params;
+	char delimitator;		// only used to pass the commas in PLACE command
 	int x, y;
 
 	toy_robot robot;
 
 	while (true) {
 		cin >> command;
+		// case sensitive
 		if (command == "PLACE") {
 			// NOT accept the form of `PLACE 0 1 NORTH`
 			cin >> x >> delimitator >> y >> direction;
@@ -30,9 +30,6 @@ void play_toy() {
 			// End the game
 			break;
 		} else {
-			// TODO: remove debug output
-			cout << "Invalid command: \"" << command
-				 << "\", please check the input" << endl;
 			// Or, end here
 			break;
 		}
