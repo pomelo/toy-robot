@@ -4,7 +4,7 @@
 enum class facing_enum { east = 0, south = 1, west = 2, north = 3 };
 
 class toy_robot {
-	// can expand into a factory pattern design.
+	// the toy robot class
 private:
 	/* properties */
 	int pos_x, pos_y;
@@ -13,13 +13,14 @@ private:
 	bool created;
 
 private:
+	// helper function for report
 	std::string get_facing();
 
 public:
 	toy_robot();
 	~toy_robot();
 
-    // action commands
+	// action commands
 	void place(int x, int y, std::string direction);
 	void move();
 	void left();

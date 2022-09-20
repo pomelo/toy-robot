@@ -32,6 +32,7 @@ string toy_robot::get_facing() {
 
 void toy_robot::place(int x, int y, string direction) {
 	auto dir = direction_map.find(direction);
+    
 	if (x >= 0 && x <= 4 && y >= 0 && y <= 4 && dir != direction_map.end()) {
 		pos_x = x;
 		pos_y = y;
@@ -39,8 +40,6 @@ void toy_robot::place(int x, int y, string direction) {
 		created = true;
 	} else {
 		created = false;
-		cout << "incorrect params in PLACE command: (" << x << ", " << y << ", "
-			 << direction << ")" << endl;
 	}
 }
 

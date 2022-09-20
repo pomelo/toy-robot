@@ -20,6 +20,9 @@ OUTPUT	:= output
 # define source directory
 SRC		:= src
 
+# define tests deirectory
+TESTS 	:= tests
+
 # define include directory
 INCLUDE	:= include
 
@@ -29,6 +32,7 @@ LIB		:= lib
 ifeq ($(OS),Windows_NT)
 MAIN	:= toy.exe
 SOURCEDIRS	:= $(SRC)
+TESTSDIRS	:= $(TESTS)
 INCLUDEDIRS	:= $(INCLUDE)
 LIBDIRS		:= $(LIB)
 FIXPATH = $(subst /,\,$1)
@@ -37,6 +41,7 @@ MD	:= mkdir
 else
 MAIN	:= toy
 SOURCEDIRS	:= $(shell find $(SRC) -type d)
+TESTSDIRS	:= $(shell find $(TESTS) -type d)
 INCLUDEDIRS	:= $(shell find $(INCLUDE) -type d)
 LIBDIRS		:= $(shell find $(LIB) -type d)
 FIXPATH = $1
@@ -56,6 +61,12 @@ SOURCES		:= $(wildcard $(patsubst %,%/*.cpp, $(SOURCEDIRS)))
 # define the C object files 
 OBJECTS		:= $(SOURCES:.cpp=.o)
 
+# define the test files
+TESTSOURCES	:= $(wildcard $(patsubst %,%/*.cpp, $(TESTSDIRS)))
+
+# define the test object files 
+TESTOBJECTS	:= $(TESTSOURCES:.cpp=.o)
+
 #
 # The following part of the makefile is generic; it can be used to 
 # build any executable just by changing the definitions above and by
@@ -63,8 +74,9 @@ OBJECTS		:= $(SOURCES:.cpp=.o)
 #
 
 OUTPUTMAIN	:= $(call FIXPATH,$(OUTPUT)/$(MAIN))
+OUTPUTTESTS	:= $(call FIXPATH,$(OUTPUT)/$(TESTS))
 
-all: $(OUTPUT) $(MAIN)
+all: $(OUTPUT) $(MAIN) $(TESTS)
 	@echo Executing 'all' complete!
 
 $(OUTPUT):
@@ -72,6 +84,9 @@ $(OUTPUT):
 
 $(MAIN): $(OBJECTS) 
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $(OUTPUTMAIN) $(OBJECTS) $(LFLAGS) $(LIBS)
+
+$(TESTS): $(TESTOBJECTS) 
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $(OUTPUTTESTS) $(TESTOBJECTS) src/toy_robot.o src/toy_player.o -lgtest -lgtest_main -lpthread $(LIBS)
 
 # this is a suffix replacement rule for building .o's from .c's
 # it uses automatic variables $<: the name of the prerequisite of
@@ -83,7 +98,9 @@ $(MAIN): $(OBJECTS)
 .PHONY: clean
 clean:
 	$(RM) $(OUTPUTMAIN)
+	$(RM) $(OUTPUTTESTS)
 	$(RM) $(call FIXPATH,$(OBJECTS))
+	$(RM) $(call FIXPATH,$(TESTOBJECTS))
 	@echo Cleanup complete!
 
 run: all
